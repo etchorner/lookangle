@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">LookAngle</string>
+	<string name="txtGPS">GPS</string>
+	<string name="txtAccel">ACC</string>
+	<string name="txtLatitude">LAT: </string>
+	<string name="txtLongitude">LON:</string>
+	<string name="txtCEP">CEP</string>
+	<string name="lblLookAngle">Calculated Look Angle</string>
+	<string name="empty_angle">0.0\u00b0 </string>
+	<string name="out_of_view">This satellite is below the visible horizon.</string>
+	<string name="menu_DD">Display in Decimal Degrees</string>
+	<string name="menu_DMS">Display in Degrees/Minutes/Seconds</string>
+</resources>
