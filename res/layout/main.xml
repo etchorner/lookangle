@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:background="@color/lgrey">
+
+	<TableLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:id="@+id/tblStatusBar"
+		android:layout_gravity="center_horizontal">
+		<TableRow android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/rowIcons">
+			<ImageView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/statusGPS"
+				android:src="@drawable/status_unk" android:layout_margin="5px"></ImageView>
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="fill_parent" android:id="@+id/txtCEPValue"
+				android:layout_margin="5px" android:textColor="@color/yellow"></TextView>
+			<ImageView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/statusAccel"
+				android:src="@drawable/status_unk" android:layout_margin="5px"></ImageView>
+
+		</TableRow>
+		<TableRow android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/rowLabels">
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/txtGPS"
+				android:text="@string/txtGPS" android:textStyle="bold"
+				android:textColor="@color/yellow" android:layout_margin="2px"></TextView>
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/txtCEP"
+				android:text="@string/txtCEP" android:textStyle="bold"
+				android:textColor="@color/yellow" android:layout_margin="2px"></TextView>
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/txtAccel"
+				android:text="@string/txtAccel" android:textStyle="bold"
+				android:textColor="@color/yellow" android:layout_margin="2px"></TextView>
+		</TableRow>
+	</TableLayout>
+
+
+
+
+
+
+	<TextView android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:gravity="center_horizontal" android:id="@+id/txtPosition"
+		android:text="Coordinates" android:textStyle="bold" android:textColor="@color/yellow" android:layout_margin="2px" android:textSize="10pt"></TextView>
+
+
+
+
+
+	<TableLayout android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:id="@+id/tblPosition">
+		<TableRow android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/rowLatitude">
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/txtLatitude"
+				android:textStyle="bold" android:id="@+id/txtLat" android:textColor="@color/yellow" android:textSize="8pt"></TextView>
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="fill_parent" android:gravity="right"
+				android:layout_gravity="right" android:id="@+id/txtPositionLat"
+				android:text="@string/empty_angle" android:layout_marginLeft="20px" android:textColor="@color/yellow" android:textSize="8pt"></TextView>
+		</TableRow>
+		<TableRow android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/rowLongitude">
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/txtLatitude"
+				android:textStyle="bold" android:id="@+id/txtLong" android:textColor="@color/yellow" android:textSize="8pt"></TextView>
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="fill_parent" android:gravity="right"
+				android:layout_gravity="right" android:id="@+id/txtPositionLong"
+				android:text="@string/empty_angle" android:layout_marginLeft="20px" android:textColor="@color/yellow" android:textSize="8pt"></TextView>
+		</TableRow>
+
+	</TableLayout>
+	<TextView android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:id="@+id/txtSatPicker"
+		android:text="Satellite Picker" android:textStyle="bold"
+		android:gravity="center_horizontal" android:textColor="@color/yellow" android:textSize="10pt" android:layout_margin="2px"></TextView>
+
+
+	<Spinner android:drawSelectorOnTop="true"
+		android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:id="@+id/spnSatPicker" android:isScrollContainer="true"></Spinner>
+
+
+
+	<TextView android:id="@+id/label" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="@string/lblLookAngle"
+		android:gravity="center_horizontal" android:background="@color/blue"
+		android:textColor="@color/yellow" android:textStyle="bold" android:textSize="10pt"/>
+
+
+	<TableLayout android:layout_height="wrap_content"
+		android:id="@+id/tblLookAngle" android:layout_width="fill_parent">
+		<TableRow android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:id="@+id/rowLookAngle"
+			android:gravity="center_horizontal" android:background="@color/blue"
+			android:textColor="@color/yellow" android:visibility="visible">
+			<TextView android:layout_height="wrap_content"
+				android:textColor="@color/yellow" android:layout_width="fill_parent"
+				android:id="@+id/txtAzimuth" android:gravity="center_horizontal"
+				android:layout_marginRight="10px" android:text="@string/empty_angle" android:background="@color/blue" android:textSize="16pt"></TextView>
+			<TextView android:layout_height="wrap_content"
+				android:textColor="@color/yellow" android:layout_width="fill_parent"
+				android:id="@+id/txtElevation" android:gravity="center_horizontal"
+				android:layout_marginRight="10px" android:text="@string/empty_angle" android:background="@color/blue" android:textSize="16pt"></TextView>
+		</TableRow>
+	</TableLayout>
+
+
+
+
+</LinearLayout>
