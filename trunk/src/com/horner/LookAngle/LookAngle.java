@@ -1,5 +1,8 @@
 package com.horner.LookAngle;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,14 +14,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 /**
  * The main {@link Activity} for the LookAngle application. The bulk of this
@@ -82,6 +83,7 @@ public class LookAngle extends Activity implements LocationListener,
 	private Boolean flagGoodLocation = false;
 	/** {@link Boolean} flag to indicate display mode of lat/long */
 	private Boolean flagDMS = false;
+	/** {@link NumberFormat} object to describe the desired numerical fmting */
 	private NumberFormat mNumFmt;
 
 	// END ATTRIBUTES
@@ -118,6 +120,8 @@ public class LookAngle extends Activity implements LocationListener,
 		mNumFmt.setMaximumFractionDigits(2);
 
 		// get a location manager...only done at start to solve pause problems.
+		// TODO: see Issue #2 on the project site
+		// (http://code.google.com/p/lookangle/issues/detail?id=2)
 		mLocMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 	} // END of onCreate() method
 
@@ -130,9 +134,7 @@ public class LookAngle extends Activity implements LocationListener,
 	@Override
 	public void onStart() {
 		// re-establish location listener after start or pause
-		mLocMgr
-				.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
-						this);
+		mLocMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
 		// open/create/fill satty db and populate w/ ephemeris
 		mDbHelper.open();
@@ -164,10 +166,8 @@ public class LookAngle extends Activity implements LocationListener,
 	}
 
 	/**
-	 * Called when the app quites or is killed by the system; it's our final
+	 * Called when the app quits or is killed by the system; it's our final
 	 * opportunity to clean up handles and other memory leak sources.
-	 * 
-	 * TODO: find and clean open {@link Cursor Cursors}
 	 */
 	@Override
 	public void onDestroy() {
@@ -210,6 +210,7 @@ public class LookAngle extends Activity implements LocationListener,
 	 * @param provider
 	 *            {@link Location} provider indicating status change.
 	 */
+	@Override
 	public void onProviderEnabled(String provider) {
 		mImgStatusGPS.setImageResource(R.drawable.status_good);
 		flagGoodLocation = true;
@@ -222,6 +223,7 @@ public class LookAngle extends Activity implements LocationListener,
 	 * @param provider
 	 *            {@link Location} provider indicating status change.
 	 */
+	@Override
 	public void onProviderDisabled(String provider) {
 		mImgStatusGPS.setImageResource(R.drawable.status_bad);
 		flagGoodLocation = false;
@@ -234,6 +236,7 @@ public class LookAngle extends Activity implements LocationListener,
 	 * {@link android.location.LocationManager#requestLocationUpdates(String, long, float, LocationListener)
 	 * requestLocationUpdates()} call.
 	 */
+	@Override
 	public void onLocationChanged(Location location) {
 		// locals
 		Cursor cur; // cursor to a 1 row result based on _id
@@ -265,6 +268,7 @@ public class LookAngle extends Activity implements LocationListener,
 		// get the target satellite from the spinner and retrieve the database
 		// row for that bird (_id, name, norad_nbr, longitude)
 		cur = mDbHelper.fetchSatellite(mSpnSatPicker.getSelectedItemId());
+		startManagingCursor(cur);
 
 		// extract longitude only
 		mSatellite.setLongitude(cur.getDouble(cur
@@ -290,9 +294,6 @@ public class LookAngle extends Activity implements LocationListener,
 		// send the target longitude to the method call that calculate look
 		// angle and updates the az/el display view.
 		updateLookAngleDisplay();
-
-		// clean up or exceptions are thrown on Activity exit.
-		cur.close();
 	}
 
 	/**
@@ -310,6 +311,7 @@ public class LookAngle extends Activity implements LocationListener,
 	 * @param extras
 	 *            {@link Bundle} of extra status information from the provider.
 	 * */
+	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 	}
 
@@ -368,6 +370,7 @@ public class LookAngle extends Activity implements LocationListener,
 
 		// get the satellite data (_id, name, norad_nbr, longitude)
 		cur = mDbHelper.fetchSatellite(id);
+		startManagingCursor(cur);
 
 		// extract longitude only and set it on the mSatellite Location object
 		mSatellite.setLongitude(cur.getDouble(cur
@@ -376,9 +379,6 @@ public class LookAngle extends Activity implements LocationListener,
 		// pass the target longitude to the updateLookAngleDisplay() method for
 		// calculation and presentation
 		updateLookAngleDisplay();
-
-		// avoid Activity ending crashes...
-		cur.close();
 	}
 
 	/**
@@ -423,11 +423,10 @@ public class LookAngle extends Activity implements LocationListener,
 						Toast.LENGTH_SHORT).show();
 			}
 		} else {
-			Toast
-					.makeText(
-							this,
-							"Antenna location unknown\nNo look angle available\nGPS down?",
-							Toast.LENGTH_SHORT).show();
+			Toast.makeText(
+					this,
+					"Antenna location unknown\nNo look angle available\nGPS down?",
+					Toast.LENGTH_SHORT).show();
 		}
 	}
 
