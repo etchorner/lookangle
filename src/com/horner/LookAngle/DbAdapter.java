@@ -14,8 +14,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DbAdapter {
 
 	// CONSTANTS
-	@SuppressWarnings("unused")
-	private static final String TAG = "DbAdapter";
 	public static final String KEY_ID = "_id";
 	public static final String KEY_NORAD_NBR = "norad_nbr";
 	public static final String KEY_LONGITUDE = "longitude";
@@ -23,21 +21,22 @@ public class DbAdapter {
 	private static final String DATABASE_NAME = "satellites";
 	private static final String DATABASE_TABLE = "tblsatellites";
 	private static final int DATABASE_VERSION = 7;
+	@SuppressWarnings("unused")
+	private static final String TAG = "DbAdapter";
 	private static final String DATABASE_CREATE = "CREATE TABLE "
 			+ DATABASE_TABLE
 			+ " (_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, norad_nbr INTEGER, inclination REAL, longitude REAL, name TEXT);";
+	// END CONSTANTS
 
 	// ATTRIBUTES
-
 	/** {@link DatabaseHelper} object to abstract the SQLite transactions */
 	private DatabaseHelper mDbHelper;
-	/**
-	 * Handle to the database in use, provided by the {@link DatabaseHelper}
-	 * abstraction.
-	 */
+	/** Handle to db in use, from {@link DatabaseHelper} abstraction. */
 	private SQLiteDatabase mDb;
 	/** {@link Context} object for method calls. */
 	private final Context mCtx;
+
+	// END ATTRIBUTES
 
 	/**
 	 * Private helper class to manage data abstraction through the
@@ -75,7 +74,6 @@ public class DbAdapter {
 			String insertStatement;
 
 			// Make the db...
-			// TODO: add other fields into the database
 			db.execSQL(DATABASE_CREATE);
 
 			// fill it up...
@@ -88,7 +86,6 @@ public class DbAdapter {
 				// read the R.raw.ephemeris data line by line and insert
 				while ((line = buf.readLine()) != null) {
 					String[] s = line.split(",");
-					// TODO: add other fields into the database
 					insertStatement = "INSERT INTO " + DATABASE_TABLE + " ("
 							+ KEY_NAME + "," + KEY_NORAD_NBR + ","
 							+ KEY_LONGITUDE + ") VALUES ('" + s[0] + "', "

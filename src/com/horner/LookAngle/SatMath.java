@@ -118,9 +118,9 @@ public class SatMath {
 	 *         is east declination, negative is west declination.
 	 */
 	public static float getMagneticDeclination(Location site) {
-		GeomagneticField mGeoMagFld = new GeomagneticField((float) site
-				.getLatitude(), (float) site.getLongitude(), (float) site
-				.getAltitude(), System.currentTimeMillis());
+		GeomagneticField mGeoMagFld = new GeomagneticField(
+				(float) site.getLatitude(), (float) site.getLongitude(),
+				(float) site.getAltitude(), System.currentTimeMillis());
 
 		return mGeoMagFld.getDeclination();
 	}
