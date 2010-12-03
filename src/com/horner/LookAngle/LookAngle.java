@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +45,6 @@ public class LookAngle extends Activity implements LocationListener,
 		OnItemSelectedListener {
 	// CONSTANTS
 	private static final char SYM_DEGREE = '\u00b0'; // Unicode for degrees
-	@SuppressWarnings("unused")
 	private static final String TAG = "LookAngle"; // for DBG logging
 	private static final int OPT_DD_ID = 1; // for option menu
 	private static final int OPT_DMS_ID = 2; // ...ditto/.
@@ -322,12 +322,10 @@ public class LookAngle extends Activity implements LocationListener,
 	private void fillData() {
 		Cursor curTarget = mDbHelper.fetchAllSatellites();
 
-		System.err.println("DBG: total entries in sat db: "
-				+ curTarget.getCount());
-
 		// avoid unclosed cursor at onDestroy()...let the Activity manage this
 		// problem
 		startManagingCursor(curTarget);
+		Log.d(TAG, "DB count of satellites: " + curTarget.getCount());
 
 		// create a simplecursoradapter to mangle the db into the spinner field
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, // current
@@ -428,6 +426,8 @@ public class LookAngle extends Activity implements LocationListener,
 					"Antenna location unknown\nNo look angle available\nGPS down?",
 					Toast.LENGTH_SHORT).show();
 		}
+		// dbg line
+		SatMath.getSkew(mAntennaSite, mSatellite);
 	}
 
 	/**

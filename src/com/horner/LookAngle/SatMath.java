@@ -2,6 +2,7 @@ package com.horner.LookAngle;
 
 import android.hardware.GeomagneticField;
 import android.location.Location;
+import android.util.Log;
 
 /**
  * Container class for public static methods. Provides some spherical geometry
@@ -13,7 +14,8 @@ import android.location.Location;
 public class SatMath {
 
 	// CONSTANTS
-	private static final float RADIANS = 57.29578f; // for Math.* methods
+	// private static final float RADIANS = 57.29578f; // for Math.* methods
+	private static final String TAG = "SatMath"; // for DBG logging
 
 	// END CONSTANTS
 
@@ -36,9 +38,9 @@ public class SatMath {
 	public static float getAzimuth(Location site, Location sat) {
 		double azimuth = 0.0;
 		double beta = 0.0;
-		double siteLat = site.getLatitude() / RADIANS;
-		double satLon = sat.getLongitude() / RADIANS;
-		double siteLon = site.getLongitude() / RADIANS;
+		double siteLat = Math.toRadians(site.getLatitude());
+		double satLon = Math.toRadians(sat.getLongitude());
+		double siteLon = Math.toRadians(site.getLongitude());
 
 		// get the right spherical triangle beta angle
 		// from the antenna to the sub-satellite spot
@@ -59,6 +61,7 @@ public class SatMath {
 		if (azimuth < 0.0)
 			azimuth = azimuth + 360;
 
+		Log.d(TAG, "calculating azimuth: " + azimuth);
 		return (float) azimuth;
 	}
 
@@ -82,16 +85,40 @@ public class SatMath {
 	 */
 	public static float getElevation(Location site, Location sat) {
 		double elev = 0.0f;
-		double siteLat = site.getLatitude() / RADIANS;
-		double satLon = sat.getLongitude() / RADIANS;
-		double siteLon = site.getLongitude() / RADIANS;
+		double siteLat = Math.toRadians(site.getLatitude());
+		double satLon = Math.toRadians(sat.getLongitude());
+		double siteLon = Math.toRadians(site.getLongitude());
 		double deltaLon = satLon - siteLon;
 
+		// TODO: Dispose of the magic number 0.1512 by converting
+		// to a constant (after I understand it's provenance)
 		elev = Math.atan((Math.cos(deltaLon) * Math.cos(siteLat) - 0.1512f)
 				/ Math.sqrt(1 - (Math.pow(Math.cos(deltaLon), 2) * Math.pow(
 						Math.cos(siteLat), 2))));
 
-		return (float) (elev * RADIANS);
+		Log.d(TAG, "calculated elevation: " + Math.toDegrees(elev));
+		return (float) Math.toDegrees(elev);
+	}
+
+	/**
+	 * Calculates the LNB/dish skew angle
+	 * 
+	 * @return {@link Double} value of the skew angle for the LNB/Dish. Positive
+	 *         values are CW, Negatives are CCW.
+	 * @param site
+	 *            {@link Location} object describing the coordinates of the
+	 *            antenna site.
+	 * @param sat
+	 *            {@link Location} object describing the longitude of the
+	 *            geostationary satellite target.
+	 */
+	public static double getSkew(Location site, Location sat) {
+		double longdiff = Math.toRadians(site.getLongitude()
+				- sat.getLongitude());
+		double latr = Math.toRadians(site.getLatitude());
+		double skew = (Math.atan(Math.sin(longdiff) / Math.tan(latr)));
+		Log.d(TAG, "calculated skew: " + Math.toDegrees(skew));
+		return Math.toDegrees(skew);
 	}
 
 	/**
