@@ -14,7 +14,6 @@ import android.util.Log;
 public class SatMath {
 
 	// CONSTANTS
-	// private static final float RADIANS = 57.29578f; // for Math.* methods
 	private static final String TAG = "SatMath"; // for DBG logging
 
 	// END CONSTANTS
@@ -122,20 +121,6 @@ public class SatMath {
 	}
 
 	/**
-	 * Converts a decimal degree representation of a coordinate into an array of
-	 * {@link String} objects, each element containing one of Degrees, Minutes,
-	 * and Seconds.
-	 * 
-	 * @param coordinate
-	 *            the real decimal degree value to be converted.
-	 * @return an array of {@link String} objects. String[0] contains degrees,
-	 *         String[1] contains minutes, and String[2] contains the seconds.
-	 */
-	public static final String dDtoDMS(double coordinate) {
-		return Location.convert(coordinate, Location.FORMAT_SECONDS);
-	}
-
-	/**
 	 * Returns a float value containing the magnetic declination of the provided
 	 * {@link Location} object at this exact moment.
 	 * 
@@ -150,5 +135,17 @@ public class SatMath {
 				(float) site.getAltitude(), System.currentTimeMillis());
 
 		return mGeoMagFld.getDeclination();
+	}
+
+	public String convertLLtoMGRS(Location in) {
+		// LOCALS
+		String positMGRS = "";
+
+		// TODO: Implement the conversion...ref
+		// http://www.uwgb.edu/dutchs/UsefulData/UTMFormulas.htm
+		// or similar (this ref is for UTM only, but keep looking
+		// or
+		// http://www.linz.govt.nz/geodetic/conversion-coordinates/projection-conversions/transverse-mercator-preliminary-computations/index.aspx
+		return positMGRS;
 	}
 }
