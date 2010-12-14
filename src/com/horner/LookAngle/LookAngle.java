@@ -276,8 +276,8 @@ public class LookAngle extends Activity implements LocationListener,
 
 		// update position displays and status flag
 		if (flagDMS) {
-			String strLat = SatMath.dDtoDMS(newLat);
-			String strLon = SatMath.dDtoDMS(newLong);
+			String strLat = Location.convert(newLat, Location.FORMAT_SECONDS);
+			String strLon = Location.convert(newLong, Location.FORMAT_SECONDS);
 			mTxtPositionLat.setText(strLat + latOrdinal);
 			mTxtPositionLong.setText(strLon + longOrdinal);
 		} else {
