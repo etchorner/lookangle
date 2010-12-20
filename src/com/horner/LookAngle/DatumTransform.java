@@ -5,16 +5,11 @@ package com.horner.LookAngle;
 
 import java.text.DecimalFormat;
 
-/*
- * Lat/Long notes
- * S = -
- * N = +
- * E = +
- * W = -
- *
- */
-
 /**
+ * Class that holds all manner of coordinate system transformation routines. All
+ * are currently based on WGS84 geoid and ACE algorithms. To reflect alternate
+ * geoids, change the constants 'a' and 'b' in the member fields.
+ * 
  * @author 547058
  * 
  */
@@ -35,21 +30,25 @@ public class DatumTransform {
 	private static final double epsilon = Math.sqrt((a * a - b * b) / (a * a));
 	private static final double epsilonP2 = Math.pow(epsilon, 2)
 			/ (1 - Math.pow(epsilon, 2));
-	/** point scale factor ' k_0' */
-	private static final double ptScaleFactor = 0.9996;
+	/** point scale factor 'k' */
+	private static final double ptScaleFactorUTM = 0.9996;
 	/** easting origin */
 	private static final int eastingOrigin = 500000;
 	/** First Meridional arc component */
 	public static final double A0 = 1 - Math.pow(epsilon, 2) / 4 - 3
 			* Math.pow(epsilon, 4) / 64 - 5 * Math.pow(epsilon, 6) / 256 - 175
 			* Math.pow(epsilon, 8) / 16384;
+	/** Second Meridional arc component */
 	public static final double A2 = 3 * (Math.pow(epsilon, 2)
 			+ Math.pow(epsilon, 4) / 4 + 15 * Math.pow(epsilon, 6) / 128 - 455 * Math
 			.pow(epsilon, 8) / 4096) / 8;
+	/** Third Meridional arc component */
 	public static final double A4 = 15 * (Math.pow(epsilon, 4) + 3
 			* Math.pow(epsilon, 6) / 4 - 77 * Math.pow(epsilon, 8) / 128) / 256;
+	/** Fourth Meridional arc component */
 	public static final double A6 = 35 * (Math.pow(epsilon, 6) - 41 * Math.pow(
 			epsilon, 8) / 32) / 3072;
+	/** Fifth Meridional arc component */
 	public static final double A8 = -315 * Math.pow(epsilon, 8) / 131072;
 	/** Latitude Zone stuff */
 	private static final char[] latZoneLetters = { 'A', 'C', 'D', 'E', 'F',
@@ -66,19 +65,25 @@ public class DatumTransform {
 	private static final int[] latZonePosDegrees = { 0, 8, 16, 24, 32, 40, 48,
 			56, 64, 72, 84 };
 
-	// private static int arrayLength = 22;
-
-	// public static void main(String[] args) {
-	//
-	// System.out.println("Testing transformation from goedetic to UTM");
-	// testConvertLLtoUTM();
-	//
-	// System.out.println("...testing complete.");
-	// }
-
+	/**
+	 * Uses Army Corps of Engineers algorithm to transform geodetic coordinate
+	 * values of latitude and longitude to a UTM String.
+	 * 
+	 * Source for algorithm is "Handbook for Transformation of Datums,
+	 * Projections, Grids, and Common Coordinate Systems", May 2004.
+	 * 
+	 * @param inLat
+	 *            geodetic latitude value (positive is North, negative is South)
+	 * @param inLon
+	 *            geodetic longitude value (positive is East, negative is West)
+	 * @return a String object containing the full UTM coordinate in the form
+	 *         Longitude Zone (Z), Latitude Zone (z), Northing (N), Easting (E)
+	 *         "ZZ z NNNNNN EEEEEE"
+	 */
 	public static String convertLLtoUTM(double inLat, double inLon) {
 		// LOCALS
 		int longZone = 0;
+		String latZone = "";
 		double lat = 0;
 		double lon = 0;
 		/** Geoid separation */
@@ -93,8 +98,9 @@ public class DatumTransform {
 		}
 		lat = Math.toRadians(inLat);
 
-		// get the UTM zone and lambda (diff, between central meridian and
+		// get the UTM zones and lambda (diff, between central meridian and
 		// longitude of fix
+		latZone = getLatZone(lat);
 		longZone = getLongZone(lon);
 		lambda = lon - getCentralMeridian(longZone);
 
@@ -128,23 +134,82 @@ public class DatumTransform {
 						* Math.pow(eta, 2));
 
 		// transform TM to UTM
-		xUTM = ptScaleFactor * xTM + eastingOrigin;
+		xUTM = ptScaleFactorUTM * xTM + eastingOrigin;
 		if (lat >= 0) {
-			yUTM = ptScaleFactor * yTM;
+			yUTM = ptScaleFactorUTM * yTM;
 		} else {
-			yUTM = ptScaleFactor * yTM + 10000000;
+			yUTM = ptScaleFactorUTM * yTM + 10000000;
 		}
 
 		// Build the whole UTM string and return it
 		longZoneFormat.setMinimumIntegerDigits(2);
 		northingFormat.setMinimumIntegerDigits(6);
 		eastingFormat.setMinimumIntegerDigits(7);
-		return longZoneFormat.format(longZone) + " " + getLatZone(inLat) + " "
+		return longZoneFormat.format(longZone) + " " + latZone + " "
 				+ northingFormat.format(xUTM) + " "
 				+ eastingFormat.format(yUTM);
 	}
 
-	public static void testConvertLLtoUTM() {
+	/**
+	 * Uses Army Corps of Engineers algorithm to transform UTM coordinate values
+	 * to geodetic latitude and longitude.
+	 * 
+	 * Source for algorithm is "Handbook for Transformation of Datums,
+	 * Projections, Grids, and Common Coordinate Systems", May 2004.
+	 * 
+	 * @param inUTM
+	 *            a String object containing the UTM coordinate
+	 * @return an array of doubles, the 0th is the latitude, and the 1st is
+	 *         longitude
+	 */
+	public static double[] convertUTMtoLL(String inUTM) {
+		// TODO: implement IAW ACE section 7.4.3.2
+		// LOCALS
+		double[] rtnLL = null;
+
+		return rtnLL;
+	}
+
+	/**
+	 * Uses Army Corps of Engineers algorithm to transform geodetic coordinate
+	 * values of latitude and longitude to a MGRS String.
+	 * 
+	 * Source for algorithm is "Handbook for Transformation of Datums,
+	 * Projections, Grids, and Common Coordinate Systems", May 2004.
+	 * 
+	 * @param inLat
+	 *            double value of latitude to be converted
+	 * @param inLon
+	 *            double value of longitude to be converted
+	 * @return a String object containing the ten digit MGRS grid reference.
+	 */
+	public static String convertLLtoMGRS(double inLat, double inLon) {
+		// TODO: implement
+		return "";
+	}
+
+	/**
+	 * Uses Army Corps of Engineers algorithm to transform MGRS grid reference
+	 * to geodetic longitude and latitude coordinates.
+	 * 
+	 * Source for algorithm is "Handbook for Transformation of Datums,
+	 * Projections, Grids, and Common Coordinate Systems", May 2004.
+	 * 
+	 * @param inMGRS
+	 *            a String object containing a formatted MGRS grid reference.
+	 * @return an array of doubles, 0th element is latitude, first element is
+	 *         longitude.
+	 */
+	public static double[] convertMGRStoLL(String inMGRS) {
+		// TODO: implement
+		// LOCALS
+		double[] rtnLL = null;
+
+		return rtnLL;
+	}
+
+	@SuppressWarnings("unused")
+	private static void testConvertLLtoUTM() {
 
 		System.out.print(convertLLtoUTM(0.0000, 0.0000) + "\n31 N 166021 0\n");
 		System.out.print(convertLLtoUTM(0.1300, -0.2324)
@@ -171,7 +236,6 @@ public class DatumTransform {
 
 	private static int getLongZone(double inLon) {
 		// 7.4.1.1 Find the UTM zone using eq. 7.22
-		// TODO: assess the non-standard width zones addressed in 7.4.1.2
 		if (inLon >= 0 && inLon <= Math.PI) {
 			return (int) Math.floor(31 + (180 * inLon) / (6 * Math.PI));
 		} else {
@@ -194,7 +258,8 @@ public class DatumTransform {
 						- A6 * Math.sin(6 * lat) + A8 * Math.sin(8 * lat));
 	}
 
-	public static int getLatZoneDegree(String letter) {
+	@SuppressWarnings("unused")
+	private static int getLatZoneDegree(String letter) {
 		char ltr = letter.charAt(0);
 		for (int i = 0; i < latZoneLetters.length; i++) {
 			if (latZoneLetters[i] == ltr) {
@@ -204,7 +269,7 @@ public class DatumTransform {
 		return -100;
 	}
 
-	public static String getLatZone(double latitude) {
+	private static String getLatZone(double latitude) {
 		int latIndex = -2;
 		int lat = (int) latitude;
 
@@ -237,9 +302,7 @@ public class DatumTransform {
 				} else {
 					continue;
 				}
-
 			}
-
 		}
 
 		if (latIndex == -1) {
@@ -255,7 +318,6 @@ public class DatumTransform {
 				latIndex = latZoneNegLetters.length - 1;
 			}
 			return String.valueOf(latZoneNegLetters[latIndex]);
-
 		}
 	}
 }

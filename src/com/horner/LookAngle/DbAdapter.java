@@ -11,12 +11,22 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * Helper class to interface applications to the Satellite ephemeris database.
+ * 
+ * @author 547058
+ * 
+ */
 public class DbAdapter {
 
 	// CONSTANTS
+	/** SQLite table "_id" column key */
 	public static final String KEY_ID = "_id";
+	/** SQLite table "_norad_nbr" column key */
 	public static final String KEY_NORAD_NBR = "norad_nbr";
+	/** SQLite table "longitude" column key */
 	public static final String KEY_LONGITUDE = "longitude";
+	/** SQLite table "name" column key */
 	public static final String KEY_NAME = "name";
 	private static final String DATABASE_NAME = "satellites";
 	private static final String DATABASE_TABLE = "tblsatellites";
