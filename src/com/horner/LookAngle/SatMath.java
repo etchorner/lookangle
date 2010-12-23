@@ -61,7 +61,10 @@ public class SatMath {
 		double x_s, y_s, z_s;
 		/** Satellite terrestrial components */
 		double x, y, z;
-		/** transformed geodetic components of satellite */
+		/**
+		 * local (right handed) geodetic components, e-axis points to geodetic
+		 * east, n points to geodetic north and u points to geodetic zenith
+		 */
 		double e, n, u;
 		/** azimuth from antenna to satellite */
 		double alpha;
@@ -212,9 +215,9 @@ public class SatMath {
 	 *         is east declination, negative is west declination.
 	 */
 	public static double getMagneticDeclination(Location site) {
-		GeomagneticField mGeoMagFld = new GeomagneticField(
-				(float) site.getLatitude(), (float) site.getLongitude(),
-				(float) site.getAltitude(), System.currentTimeMillis());
+		GeomagneticField mGeoMagFld = new GeomagneticField((float) site
+				.getLatitude(), (float) site.getLongitude(), (float) site
+				.getAltitude(), System.currentTimeMillis());
 
 		return mGeoMagFld.getDeclination();
 	}
