@@ -10,11 +10,10 @@ import java.text.DecimalFormat;
  * are currently based on WGS84 geoid and ACE algorithms. To reflect alternate
  * geoids, change the constants 'a' and 'b' in the member fields.
  * 
- * @author 547058
+ * @author etchorner
  * 
  */
 public class DatumTransform {
-
 	// CONSTANTS
 	/** formatting object for longitude zone */
 	private static DecimalFormat longZoneFormat = new DecimalFormat("#");
@@ -22,18 +21,18 @@ public class DatumTransform {
 	private static DecimalFormat northingFormat = new DecimalFormat("#");
 	/** formatting object for UTM easting value */
 	private static DecimalFormat eastingFormat = new DecimalFormat("#");
-	/** semi-major axis of ellipsoid */
+	/** semi-major axis of WGS84 ellipsoid */
 	private static final double a = 6378137d;
-	/** semi-minor axis of ellipsoid */
+	/** semi-minor axis of WGS84 ellipsoid */
 	private static final double b = 6356752.3142d;
-	/** first eccentricity of ellipsoid */
+	/** first eccentricity of WGS84 ellipsoid */
 	private static final double epsilon = Math.sqrt((a * a - b * b) / (a * a));
 	private static final double epsilonP2 = Math.pow(epsilon, 2)
 			/ (1 - Math.pow(epsilon, 2));
-	/** point scale factor 'k' */
+	/** point scale factor of UTM */
 	private static final double ptScaleFactorUTM = 0.9996;
-	/** easting origin */
-	private static final int eastingOrigin = 500000;
+	/** UTM easting origin */
+	private static final int UTMeastingOrigin = 500000;
 	/** First Meridional arc component */
 	public static final double A0 = 1 - Math.pow(epsilon, 2) / 4 - 3
 			* Math.pow(epsilon, 4) / 64 - 5 * Math.pow(epsilon, 6) / 256 - 175
@@ -134,7 +133,7 @@ public class DatumTransform {
 						* Math.pow(eta, 2));
 
 		// transform TM to UTM
-		xUTM = ptScaleFactorUTM * xTM + eastingOrigin;
+		xUTM = ptScaleFactorUTM * xTM + UTMeastingOrigin;
 		if (lat >= 0) {
 			yUTM = ptScaleFactorUTM * yTM;
 		} else {
