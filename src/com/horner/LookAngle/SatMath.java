@@ -26,67 +26,70 @@ public class SatMath {
 	 * <em>Determination of Look Angles to Geostationary Communication Satellites</em>
 	 * 
 	 * @param site
-	 *            the geocoded antenna Location object
+	 *            the geocoded antenna {@link Location} object
 	 * @param sat
-	 *            the geocoded satellite Location object (really only need the
-	 *            longitude of geostationary satellites.
+	 *            the geocoded satellite {@link Location} object (really only
+	 *            need the longitude of geostationary satellites.
 	 * @return an array of two double values. The 0th element is the azimuth,
 	 *         and the 1st element is the elevation.
 	 */
 	public static double[] getLookAngle(Location site, Location sat) {
 		// LOCALS
+		/** return value array with azimut and elevation */
 		double[] rtnLookAngle = new double[2];
+		/** altitude of antenna site */
 		double siteAlt = site.getAltitude();
+		/** latitude of antenna site */
 		double siteLat = Math.toRadians(site.getLatitude());
+		/** longitude of antenna site */
 		double siteLon = Math.toRadians(site.getLongitude());
+		/** longitude of satellite (sub-satellite point) */
 		double satLon = Math.toRadians(sat.getLongitude());
+		/** Semi-major axis of WGS84 ellipsoid */
 		long a = 6378137;
+		/** Semi-minor axis of WGS84 ellipsoid */
 		double b = 6356752.3142d;
+		/** Eccentricity of WGS84 ellipsoid */
 		double epsilon = Math.sqrt((a * a - b * b) / (a * a));
+		/** Principal radius of curvature in the prime vertical */
 		double N = a / Math.sqrt(1 - Math.pow(epsilon * Math.sin(siteLat), 2));
+		/** Average satellite altitude above ellipsoid origin (in meters) */
 		long r = 42200000;
-		double x_p;
-		double y_p;
-		double z_p;
-		double x_s;
-		double y_s;
-		double z_s;
-		double[] mtxSatComponentsXYZ = new double[3]; // components in {x,y,z}
-		double e; // component of the satellite in local {e,n,u}
-		double n; // component of the satellite in local {e,n,u}
-		double u; // component of the satellite in local {e,n,u}
-		double alpha; // azimuth to satellite
-		double nu; // elevation to satellite
+		/** Cartesian coordinates of antenna site */
+		double x_p, y_p, z_p;
+		/** Cartesion coordinates of satellite */
+		double x_s, y_s, z_s;
+		/** Satellite terrestrial components */
+		double x, y, z;
+		/** transformed geodetic components of satellite */
+		double e, n, u;
+		/** azimuth from antenna to satellite */
+		double alpha;
+		/** elevation (vertical angle) from antenna to satellite */
+		double nu;
 
 		// Step 1: Transform curvilinear to cartesian coordinates
+		// a. Antenna site
 		x_p = (N + siteAlt) * Math.cos(siteLon) * Math.cos(siteLat);
 		y_p = (N + siteAlt) * Math.sin(siteLon) * Math.cos(siteLat);
 		z_p = (N * (1 - Math.pow(epsilon, 2)) + siteAlt) * Math.sin(siteLat);
 
+		// b. Satellite location
 		x_s = r * Math.cos(satLon);
 		y_s = r * Math.sin(satLon);
 		z_s = 0;
 
 		// Step 2: Satellite components (x,y,z)
-		// * Matrix subtraction of antenna position from satellite position
-		mtxSatComponentsXYZ[0] = x_s - x_p;
-		mtxSatComponentsXYZ[1] = y_s - y_p;
-		mtxSatComponentsXYZ[2] = z_s - z_p;
+		x = x_s - x_p;
+		y = y_s - y_p;
+		z = z_s - z_p;
 
-		// Step 3: Satellite components (e,n,u)
-		// [e] [x]
-		// [n] = R_1(pi/2-inLat)*R_3(inLong+pi/2)[y]
-		// [u] [z]
-		e = -1 * Math.sin(siteLon) * mtxSatComponentsXYZ[0] + Math.cos(siteLon)
-				* mtxSatComponentsXYZ[1];
-		n = -1 * Math.sin(siteLat) * Math.cos(siteLon) * mtxSatComponentsXYZ[0]
-				- Math.sin(siteLat) * Math.sin(siteLon)
-				* mtxSatComponentsXYZ[1] + Math.cos(siteLat)
-				* mtxSatComponentsXYZ[2];
-		u = Math.cos(siteLat) * Math.cos(siteLon) * mtxSatComponentsXYZ[0]
-				+ Math.cos(siteLat) * Math.sin(siteLon)
-				* mtxSatComponentsXYZ[1] + Math.sin(siteLat)
-				* mtxSatComponentsXYZ[2];
+		// Step 3: Transform satellite components to geodetic e,n,u
+		e = -1 * Math.sin(siteLon) * x + Math.cos(siteLon) * y;
+		n = -1 * Math.sin(siteLat) * Math.cos(siteLon) * x - Math.sin(siteLat)
+				* Math.sin(siteLon) * y + Math.cos(siteLat) * z;
+		u = Math.cos(siteLat) * Math.cos(siteLon) * x + Math.cos(siteLat)
+				* Math.sin(siteLon) * y + Math.sin(siteLat) * z;
 
 		// Step 4: Calculate look angle
 		alpha = Math.atan(e / n);
@@ -107,10 +110,9 @@ public class SatMath {
 
 	/**
 	 * Calculates the antenna pointing <B>TRUE</B> azimuth to the target
-	 * satellite. The math comes from Soler, et al. (1995)
-	 * <em>Determination of Look Angles to Geostationary Communication Satellites</em>
+	 * satellite.
 	 * 
-	 * @return {@link Double} degree value of the <B>TRUE</B>azimuth look angle
+	 * @return double decimal degree value of the <B>TRUE</B>azimuth look angle
 	 *         from the antenna to the target satellite.
 	 * @param site
 	 *            {@link Location} object describing the coordinates of the
@@ -119,9 +121,8 @@ public class SatMath {
 	 *            {@link Location} object describing the longitude of the
 	 *            geostationary satellite target.
 	 * 
-	 * @see link http://www.ngs.noaa.gov/CORS/Articles/SolerEisemannJSE.pdf
 	 */
-	public static float getAzimuth(Location site, Location sat) {
+	public static double getAzimuth(Location site, Location sat) {
 		double azimuth = 0.0;
 		double beta = 0.0;
 		double siteLat = Math.toRadians(site.getLatitude());
@@ -148,16 +149,15 @@ public class SatMath {
 
 		azimuth = Math.toDegrees(azimuth);
 
-		return (float) azimuth;
+		return azimuth;
 	}
 
 	/**
 	 * Calculates the antenna pointing elevation above the horizon to the target
-	 * satellite. The math comes from Soler, et al. (1995)
-	 * <em>Determination of Look Angles to Geostationary Communication Satellites</em>
+	 * satellite.
 	 * 
-	 * @return {@link Double} value of the elevation look angle from the antenna
-	 *         to the target satellite.
+	 * @return double decimal degree value of the elevation look angle from the
+	 *         antenna to the target satellite.
 	 * @param site
 	 *            {@link Location} object describing the coordinates of the
 	 *            antenna site.
@@ -165,11 +165,8 @@ public class SatMath {
 	 *            {@link Location} object describing the longitude of the
 	 *            geostationary satellite target.
 	 * 
-	 * @see link http://www.ngs.noaa.gov/CORS/Articles/SolerEisemannJSE.pdf
-	 * 
-	 *      TODO: implement the rigorous matrix version of Soler's paper.
 	 */
-	public static float getElevation(Location site, Location sat) {
+	public static double getElevation(Location site, Location sat) {
 		double elev = 0.0f;
 		double siteLat = Math.toRadians(site.getLatitude());
 		double satLon = Math.toRadians(sat.getLongitude());
@@ -182,7 +179,7 @@ public class SatMath {
 				/ Math.sqrt(1 - (Math.pow(Math.cos(deltaLon), 2) * Math.pow(
 						Math.cos(siteLat), 2))));
 
-		return (float) Math.toDegrees(elev);
+		return Math.toDegrees(elev);
 	}
 
 	/**
@@ -214,7 +211,7 @@ public class SatMath {
 	 * @return a float value containing the magnetic declination. Positive value
 	 *         is east declination, negative is west declination.
 	 */
-	public static float getMagneticDeclination(Location site) {
+	public static double getMagneticDeclination(Location site) {
 		GeomagneticField mGeoMagFld = new GeomagneticField(
 				(float) site.getLatitude(), (float) site.getLongitude(),
 				(float) site.getAltitude(), System.currentTimeMillis());

@@ -399,9 +399,7 @@ public class LookAngle extends Activity implements LocationListener,
 	 */
 	private void updateLookAngleDisplay() {
 		// locals
-		float azimuth; // result of look angle calculation
-		float elevation; // result of look angle calculation
-		float magDecl;
+		double azimuth, elevation, magDecl;
 
 		// only update display if current position is known goodish
 		if (flagGoodLocation) {
