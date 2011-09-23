@@ -109,7 +109,6 @@ public class LookAngle extends Activity implements LocationListener,
 		mImgStatusAccel = (ImageView) findViewById(R.id.statusAccel);
 		mImgStatusGPS = (ImageView) findViewById(R.id.statusGPS);
 		mSpnSatPicker = (Spinner) findViewById(R.id.spnSatPicker);
-		mTxtAzimuth = (TextView) findViewById(R.id.txtAzimuth);
 
 		// get handle to db
 		mDbHelper = new DbAdapter(this);
