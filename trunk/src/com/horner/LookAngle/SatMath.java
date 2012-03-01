@@ -56,9 +56,9 @@ public class SatMath {
 		/** Average satellite altitude above ellipsoid origin (in meters) */
 		long r = 42200000;
 		/** Cartesian coordinates of antenna site */
-		double x_p, y_p, z_p;
+		double x_ant, y_ant, z_ant;
 		/** Cartesion coordinates of satellite */
-		double x_s, y_s, z_s;
+		double x_sat, y_sat, z_sat;
 		/** Satellite terrestrial components */
 		double x, y, z;
 		/**
@@ -73,19 +73,19 @@ public class SatMath {
 
 		// Step 1: Transform curvilinear to cartesian coordinates
 		// a. Antenna site
-		x_p = (N + siteAlt) * Math.cos(siteLon) * Math.cos(siteLat);
-		y_p = (N + siteAlt) * Math.sin(siteLon) * Math.cos(siteLat);
-		z_p = (N * (1 - Math.pow(epsilon, 2)) + siteAlt) * Math.sin(siteLat);
+		x_ant = (N + siteAlt) * Math.cos(siteLon) * Math.cos(siteLat);
+		y_ant = (N + siteAlt) * Math.sin(siteLon) * Math.cos(siteLat);
+		z_ant = (N * (1 - Math.pow(epsilon, 2)) + siteAlt) * Math.sin(siteLat);
 
 		// b. Satellite location
-		x_s = r * Math.cos(satLon);
-		y_s = r * Math.sin(satLon);
-		z_s = 0;
+		x_sat = r * Math.cos(satLon);
+		y_sat = r * Math.sin(satLon);
+		z_sat = 0;
 
 		// Step 2: Satellite components (x,y,z)
-		x = x_s - x_p;
-		y = y_s - y_p;
-		z = z_s - z_p;
+		x = x_sat - x_ant;
+		y = y_sat - y_ant;
+		z = z_sat - z_ant;
 
 		// Step 3: Transform satellite components to geodetic e,n,u
 		e = -1 * Math.sin(siteLon) * x + Math.cos(siteLon) * y;
@@ -112,10 +112,10 @@ public class SatMath {
 	}
 
 	/**
-	 * Calculates the antenna pointing <B>TRUE</B> azimuth to the target
+	 * Calculates the antenna pointing <B>MAGNETIC</B> azimuth to the target
 	 * satellite.
 	 * 
-	 * @return double decimal degree value of the <B>TRUE</B>azimuth look angle
+	 * @return double decimal degree value of the <B>MAGNETIC</B>azimuth look angle
 	 *         from the antenna to the target satellite.
 	 * @param site
 	 *            {@link Location} object describing the coordinates of the
@@ -142,17 +142,13 @@ public class SatMath {
 		else
 			azimuth = Math.PI + Math.atan(beta);
 
-		// back to degrees
-
 		// manage N/S hemispheres
 		if (site.getLatitude() < 0.0)
 			azimuth = azimuth - Math.PI;
 		if (azimuth < 0.0)
 			azimuth = azimuth + 2 * Math.PI;
 
-		azimuth = Math.toDegrees(azimuth);
-
-		return azimuth;
+		return Math.toDegrees(azimuth);
 	}
 
 	/**
@@ -215,9 +211,9 @@ public class SatMath {
 	 *         is east declination, negative is west declination.
 	 */
 	public static double getMagneticDeclination(Location site) {
-		GeomagneticField mGeoMagFld = new GeomagneticField((float) site
-				.getLatitude(), (float) site.getLongitude(), (float) site
-				.getAltitude(), System.currentTimeMillis());
+		GeomagneticField mGeoMagFld = new GeomagneticField(
+				(float) site.getLatitude(), (float) site.getLongitude(),
+				(float) site.getAltitude(), System.currentTimeMillis());
 
 		return mGeoMagFld.getDeclination();
 	}
