@@ -36,14 +36,17 @@
 		</TableRow>
 	</TableLayout>
 
-
-
-
-
-
-	<TextView android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:gravity="center_horizontal" android:id="@+id/txtPosition"
-		android:text="Coordinates" android:textStyle="bold" android:textColor="@color/yellow" android:layout_margin="2px" android:textSize="10pt"></TextView>
+	<TextView
+	    android:id="@+id/txtPosition"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="2px"
+	    android:gravity="center_horizontal"
+	    android:text="Coordinates"
+	    android:textColor="@color/yellow"
+	    android:textSize="10pt"
+	    android:textStyle="bold" >
+</TextView>
 
 
 

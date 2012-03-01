@@ -404,7 +404,7 @@ public class LookAngle extends Activity implements LocationListener,
 		if (flagGoodLocation) {
 			magDecl = SatMath.getMagneticDeclination(mAntennaSite);
 
-			// calculate look angle, adjust az for magnetic decl
+			// calculate look angle, adjust az for magnetic decl (becomes 'TRUE' azimuth)
 			azimuth = SatMath.getAzimuth(mAntennaSite, mSatellite) - magDecl;
 			elevation = SatMath.getElevation(mAntennaSite, mSatellite);
 
