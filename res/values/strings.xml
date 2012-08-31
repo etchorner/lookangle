@@ -11,4 +11,7 @@
 	<string name="out_of_view">This satellite is below the visible horizon.</string>
 	<string name="menu_DD">Display in Decimal Degrees</string>
 	<string name="menu_DMS">Display in Degrees/Minutes/Seconds</string>
+	<string name="txtCoordinates">Coordinates</string>
+	<string name="txtSatellitePicker">SatellitePicker</string>
+	<string name="todo">TODO</string>
 </resources>

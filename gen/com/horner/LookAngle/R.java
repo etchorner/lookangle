@@ -12,8 +12,7 @@ public final class R {
     }
     public static final class color {
         public static final int blue=0x7f050000;
-        public static final int lgrey=0x7f050003;
-        public static final int red=0x7f050002;
+        public static final int lgrey=0x7f050002;
         public static final int yellow=0x7f050001;
     }
     public static final class drawable {
@@ -28,7 +27,6 @@ public final class R {
         public static final int rowLabels=0x7f070005;
         public static final int rowLatitude=0x7f07000b;
         public static final int rowLongitude=0x7f07000e;
-        public static final int rowLookAngle=0x7f070015;
         public static final int spnSatPicker=0x7f070012;
         public static final int statusAccel=0x7f070004;
         public static final int statusGPS=0x7f070002;
@@ -36,10 +34,10 @@ public final class R {
         public static final int tblPosition=0x7f07000a;
         public static final int tblStatusBar=0x7f070000;
         public static final int txtAccel=0x7f070008;
-        public static final int txtAzimuth=0x7f070016;
+        public static final int txtAzimuth=0x7f070015;
         public static final int txtCEP=0x7f070007;
         public static final int txtCEPValue=0x7f070003;
-        public static final int txtElevation=0x7f070017;
+        public static final int txtElevation=0x7f070016;
         public static final int txtGPS=0x7f070006;
         public static final int txtLat=0x7f07000c;
         public static final int txtLong=0x7f07000f;
@@ -62,10 +60,13 @@ public final class R {
         public static final int menu_DD=0x7f060009;
         public static final int menu_DMS=0x7f06000a;
         public static final int out_of_view=0x7f060008;
+        public static final int todo=0x7f06000d;
         public static final int txtAccel=0x7f060002;
         public static final int txtCEP=0x7f060005;
+        public static final int txtCoordinates=0x7f06000b;
         public static final int txtGPS=0x7f060001;
         public static final int txtLatitude=0x7f060003;
         public static final int txtLongitude=0x7f060004;
+        public static final int txtSatellitePicker=0x7f06000c;
     }
 }
